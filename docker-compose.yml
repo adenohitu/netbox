@@ -78,4 +78,4 @@ services:
       - redis-server --requirepass $$REDIS_PASSWORD ## $$ because of docker-compose
     env_file: env/redis-cache.env
     volumes:
-      - netbox-redis-cache-data:/data
+      - ./netbox-redis-cache-data:/data
