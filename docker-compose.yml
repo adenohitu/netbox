@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   netbox: &netbox
-    restart: unless-stopped
+    restart: always
     image: docker.io/netboxcommunity/netbox:${VERSION-v3.7-2.8.0}
     ports:
       - "8000:8080"
@@ -15,14 +15,14 @@ services:
       start_period: 60s
       timeout: 3s
       interval: 15s
-      test: "curl -f http://localhost:8080/api/ || exit 1"
+      test: "curl -f http://localhost:8000/api/ || exit 1"
     volumes:
       - ./configuration:/etc/netbox/config:z,ro
       - ./netbox-media-files:/opt/netbox/netbox/media:rw
       - ./netbox-reports-files:/opt/netbox/netbox/reports:rw
       - ./netbox-scripts-files:/opt/netbox/netbox/scripts:rw
   netbox-worker:
-    restart: unless-stopped
+    restart: always
     <<: *netbox
     depends_on:
       netbox:
@@ -37,7 +37,7 @@ services:
       interval: 15s
       test: "ps -aux | grep -v grep | grep -q rqworker || exit 1"
   netbox-housekeeping:
-    restart: unless-stopped
+    restart: always
     <<: *netbox
     depends_on:
       netbox:
@@ -52,7 +52,7 @@ services:
 
   # postgres
   postgres:
-    restart: unless-stopped
+    restart: always
     image: docker.io/postgres:16-alpine
     env_file: env/postgres.env
     volumes:
@@ -60,7 +60,7 @@ services:
 
   # redis
   redis:
-    restart: unless-stopped
+    restart: always
     image: docker.io/redis:7-alpine
     command:
       - sh
@@ -70,7 +70,7 @@ services:
     volumes:
       - ./netbox-redis-data:/data
   redis-cache:
-    restart: unless-stopped
+    restart: always
     image: docker.io/redis:7-alpine
     command:
       - sh
